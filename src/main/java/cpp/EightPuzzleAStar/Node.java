@@ -16,6 +16,7 @@ public class Node
         PuzzleState = puzzle;
         Cost = Integer.MAX_VALUE;
         Heuristic = Integer.MAX_VALUE;
+        ParentNode = null;
     }
     
     public boolean isGoalState()

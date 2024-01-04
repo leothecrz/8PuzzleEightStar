@@ -25,11 +25,6 @@ public class EightPuzzle
         return inversions;
     }
 
-    /***
-     * 
-     * @param input
-     * @return
-     */
     public static boolean isStringValidPuzzle(String input) 
     {
         if(input.length() != 9)
@@ -60,7 +55,6 @@ public class EightPuzzle
         return misplaced;
     } 
 
-
     public static int CountTotalDistance(String input)
     {
         int totalDistance = 0;
@@ -78,7 +72,7 @@ public class EightPuzzle
             int currentCords[] = ToCoordinates(i);
             int GoalCords[] = ToCoordinates(charVal);
             
-            totalDistance += calculateDistance(GoalCords[0], GoalCords[1], currentCords[0], currentCords[1]); 
+            totalDistance += calculateMDistance(GoalCords[0], GoalCords[1], currentCords[0], currentCords[1]); 
         }
         return totalDistance;
     }
@@ -98,6 +92,11 @@ public class EightPuzzle
     public static int calculateDistance(int x,int y, int x1, int y1) 
     {
         return (int) Math.sqrt(Math.pow((x1 - x)*10, 2) + Math.pow(y1-y*10, 2));
+    }
+    
+    public static int calculateMDistance(int x,int y, int x1, int y1) 
+    {
+        return (int) (Math.abs((x-x1)) + Math.abs((y-y1)));
     }
 
   }

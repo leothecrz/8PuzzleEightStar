@@ -8,14 +8,15 @@ import java.util.Vector;
 
 public class AStar 
 {
-
     private PriorityQueue<Node> unexpandedNodes;
     private HashMap<String, Node> expandedNodes;
-    
-    public AStar()
+    private boolean useHueristicOne = false;
+
+    public AStar(boolean useH1)
     {
         unexpandedNodes = new PriorityQueue<>(Comparator.comparingInt(node -> node.getTotalCost()));
         expandedNodes =  new HashMap<>();
+        useHueristicOne = useH1;
     }
 
     public Stack<int[]> findMovesFrom(int row, int col)
@@ -73,12 +74,45 @@ public class AStar
     public Integer heuristic(Node node)
     {
         int h = 0;
-        h += EightPuzzle.CountMisplaced(node.getPuzzleState());
-        h += EightPuzzle.CountTotalDistance(node.getPuzzleState());
+        if(useHueristicOne)
+            h += EightPuzzle.CountMisplaced(node.getPuzzleState());
+        else
+            h += EightPuzzle.CountTotalDistance(node.getPuzzleState());
         return h;
     }
 
-    public boolean performAStarSearch(Node startNode) 
+    public int printPath(Node node)
+    {
+        int size = 0;
+        Stack<Node> path = new Stack<>();
+
+        Node activNode = node;
+
+        while (activNode.getParentNode() != null) 
+        {
+            path.push(activNode);
+            activNode = activNode.getParentNode();    
+        }
+        System.out.println("Start State: ");
+        EightPuzzle.printStringAsMatrix(activNode.getPuzzleState());
+        System.out.println();
+        int steps = 1;
+        size = path.size();
+        while (!path.empty())
+        {
+            Node currentNode = path.pop();
+            EightPuzzle.printStringAsMatrix(currentNode.getPuzzleState());
+            System.out.print("HCost: ");
+            System.out.println(currentNode.getHeuristic());
+
+            System.out.print("Step: ");
+            System.out.println(steps++);      
+            System.out.println();      
+        }
+        return size;
+    }
+
+    public int performAStarSearch(Node startNode) 
     {
         startNode.setCost(0);
         startNode.setHeuristic(heuristic(startNode));
@@ -88,17 +122,13 @@ public class AStar
         { 
             
             Node currentNode = unexpandedNodes.poll();
-            EightPuzzle.printStringAsMatrix(currentNode.getPuzzleState());
-            
-            System.out.printf("Count: %d %nHCost: %d %nCCost: %d %n", unexpandedNodes.size(), currentNode.getHeuristic(), currentNode.getCost());
 
             if (currentNode.isGoalState()) 
             {
-                return true;
+                return printPath(currentNode);
             }
 
             expandedNodes.put(currentNode.getPuzzleState(), currentNode);
-
 
             Vector<Node> neighbors = generateNeighbors(currentNode);
             for (Node neighbor : neighbors) 
@@ -107,7 +137,6 @@ public class AStar
 
                 if(tentativeCost < neighbor.getCost()) //DEAFULTs HAVE MAX VAL || Already Visited Should Have Their Cost
                 {
-
                     neighbor.setParentNode(currentNode);
                     neighbor.setHeuristic(heuristic(neighbor));
                     neighbor.setCost(tentativeCost);
@@ -117,7 +146,17 @@ public class AStar
 
             }
         }
-        return false;
+        return -1;
+    }
+
+    public int getUnexpandedNodesSize()
+    {
+        return unexpandedNodes.size();
+    }
+
+    public int getExpandedNodesSize()
+    {
+        return expandedNodes.size();
     }
 
 }
