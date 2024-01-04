@@ -12,6 +12,10 @@ public class AStar
     private HashMap<String, Node> expandedNodes;
     private boolean useHueristicOne = false;
 
+    /***
+     * Constructors
+     * @param useH1
+     */
     public AStar(boolean useH1)
     {
         unexpandedNodes = new PriorityQueue<>(Comparator.comparingInt(node -> node.getTotalCost()));
@@ -19,25 +23,12 @@ public class AStar
         useHueristicOne = useH1;
     }
 
-    public Stack<int[]> findMovesFrom(int row, int col)
-    {
-        Stack<int[]> moves = new Stack<>();
-
-        if (row > 0)
-            moves.add(new int[]{row - 1, col});
-
-        if (row < 2)
-            moves.add(new int[]{row + 1, col});
-
-        if (col > 0)
-            moves.add(new int[]{row, col - 1});
-        
-        if (col < 2)
-            moves.add(new int[]{row, col + 1});
-        
-       return moves;
-    }
-
+    /***
+     * Find the neighbors for the given node.
+     * Generate moves.
+     * @param curNode
+     * @return
+     */
     public Vector<Node> generateNeighbors(Node curNode)
     {  
         Vector<Node> neighbors = new Vector<>();  
@@ -47,7 +38,7 @@ public class AStar
         int index =  puzzle.indexOf('0');
         int[] cords = EightPuzzle.ToCoordinates(index);
 
-        Stack<int[]> moves = findMovesFrom(cords[0], cords[1]);
+        Stack<int[]> moves = EightPuzzle.findMovesFrom(cords[0], cords[1]);
         while (!moves.empty()) 
         {
             int[] activeMove = moves.pop();
@@ -71,6 +62,11 @@ public class AStar
         return neighbors;
     }
 
+    /***
+     * Find the distance from the given node.
+     * @param node
+     * @return
+     */
     public Integer heuristic(Node node)
     {
         int h = 0;
@@ -81,6 +77,11 @@ public class AStar
         return h;
     }
 
+    /***
+     * Given the final node, follow the parent node path and print from the begining to the end.
+     * @param node
+     * @return
+     */
     public int printPath(Node node)
     {
         int size = 0;
@@ -109,9 +110,18 @@ public class AStar
             System.out.println(steps++);      
             System.out.println();      
         }
+
+        System.out.print("Generated Nodes: ");
+        System.out.print(unexpandedNodes.size() + expandedNodes.size());      
+        System.out.println();      
         return size;
     }
 
+    /***
+     * Begin The Search
+     * @param startNode
+     * @return
+     */
     public int performAStarSearch(Node startNode) 
     {
         startNode.setCost(0);
@@ -149,11 +159,19 @@ public class AStar
         return -1;
     }
 
+    /***
+     * 
+     * @return
+     */
     public int getUnexpandedNodesSize()
     {
         return unexpandedNodes.size();
     }
 
+    /***
+     * 
+     * @return
+     */
     public int getExpandedNodesSize()
     {
         return expandedNodes.size();

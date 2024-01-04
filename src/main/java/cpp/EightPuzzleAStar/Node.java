@@ -3,13 +3,10 @@ package cpp.EightPuzzleAStar;
 
 public class Node 
 {
-
     private String PuzzleState;
     private Node ParentNode;
-    
     private Integer Cost;
     private Integer Heuristic;
-
 
     public Node(String puzzle)
     {
@@ -64,6 +61,19 @@ public class Node
     public String getPuzzleState() 
     {
         return PuzzleState;
+    }
+
+    @Override
+    public boolean equals(Object obj) 
+    {
+        if (this == obj) 
+            return true;
+        
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+
+        Node otherNode = (Node) obj;
+        return PuzzleState.equals(otherNode.PuzzleState);
     }
     
 }

@@ -14,7 +14,7 @@ import java.util.Collections;
 public class Main 
 {
     /***
-     * 
+     * Given the filepath read a 3x3 matrix from it.
      * @param filePath
      * @return
      */
@@ -46,7 +46,7 @@ public class Main
     }
 
     /***
-     * 
+     * get 1,2 or 3 from the user.
      * @return
      */
     public static int getUserInput() 
@@ -88,7 +88,7 @@ public class Main
     }
     
     /***
-     * 
+     * retrive an existing file name from the user.
      * @return
      */
     public static String getFileName() 
@@ -122,19 +122,12 @@ public class Main
                 e.printStackTrace();
             }
         }
-        try 
-        {
-            reader.close();
-        } 
-        catch (IOException e) 
-        {
-            e.printStackTrace();
-        }
         return fileName;
     }
 
     /***
-     * 
+     * determine which hueristic function to use based on user input.
+     * CLOSES SYSTEM.IN
      * @return
      */
     public static boolean useH1orH2() 
@@ -156,11 +149,21 @@ public class Main
         {
             IOE.printStackTrace();
         }
+        
+        try 
+        {
+            reader.close();
+        } 
+        catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
+
         return userInput.equals("yes");
     }
 
     /***
-     * 
+     * create a random puzzle string
      * @return
      */
     public static String generateRandomString() 
@@ -179,7 +182,7 @@ public class Main
     }
 
     /***
-     * 
+     * get puzzle from console
      */
     public static String getPuzzleFromConsole()
     {
@@ -214,18 +217,11 @@ public class Main
             }
         }
 
-        try 
-        {
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         return puzzle;
     }
 
     /***
-     * 
+     * Main Function. Entry Point
      * @param args
      */
     public static void main(String[] args) 
@@ -283,12 +279,15 @@ public class Main
     }
 
     /***
-     * 
+     * Test randomly generate puzzles and gather data.
      */
     public static void Test100()
     {
-        int size = 1000;
+        int size = 100;
         int results[] = new int[size];
+        int unexpandedNodes[] = new int[size];
+        int expandedNodes[] = new int[size];
+        
         long times[] = new long[size]; 
         boolean useH1 = useH1orH2();
         for (int i = 0; i < size; i++) 
@@ -301,22 +300,33 @@ public class Main
             long start = System.currentTimeMillis();
             results[i] = solver.performAStarSearch(new Node(puzzleString));
             times[i] = System.currentTimeMillis() - start;
+            expandedNodes[i] = solver.getExpandedNodesSize();
+            unexpandedNodes[i] = solver.getUnexpandedNodesSize();
+        
         }
 
         System.out.println(Arrays.toString(results));
-        calculateAndPrintAverage(results);
+        calculateAndPrintAverage("STEP COST", results);
         System.out.println();
 
         System.out.println(Arrays.toString(times));
         calculateAndPrintAverage(times);
         System.out.println();
+
+        System.out.println(Arrays.toString(expandedNodes));
+        calculateAndPrintAverage("ExpandedNodes Count",expandedNodes);
+        System.out.println();
+
+        System.out.println(Arrays.toString(unexpandedNodes));
+        calculateAndPrintAverage("UnexpandedNodes Count",unexpandedNodes);
+        System.out.println();
     }
     
     /***
-     * 
+     * print average of int []
      * @param array
      */
-    public static void calculateAndPrintAverage(int[] array) 
+    public static void calculateAndPrintAverage(String id, int[] array) 
     {
         if (array.length == 0) 
             return;
@@ -326,11 +336,11 @@ public class Main
             sum += num;
         
         double average = (double) sum / array.length;
-        System.out.println("The average STEP COST is: " + average);
+        System.out.println("The average " + id + " is: " + average);
     }
 
     /***
-     * 
+     * print average of long[] 
      * @param array
      */
     public static void calculateAndPrintAverage(long[] array) 
